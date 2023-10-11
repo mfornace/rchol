@@ -3,7 +3,7 @@
 #include <stdexcept>
 
 #include "spcol.hpp"
-
+#include <vector>
 
 void sp_copy(const gsl_spmatrix *a, gsl_spmatrix *b);
 
@@ -41,11 +41,11 @@ void gsl_spmatrix_add(const gsl_spmatrix *a, gsl_spmatrix *b)
     c->size1 = b->size1;
     c->size2 = 1;
 
-    size_t i_array[ a->nz + 4 + b->nz] = {0};
-    double data_array[ a->nz + 4 + b->nz] = {0};
+    std::vector<size_t> i_array(a->nz + 4 + b->nz);// = {0};
+    std::vector<double> data_array(a->nz + 4 + b->nz);// = {0};
     size_t p_array[2] = {0};
-    c->i = i_array;
-    c->data = data_array;
+    c->i = i_array.data();
+    c->data = data_array.data();
     c->p = p_array;
 
     c->nzmax = a->nz + 4 + b->nz;

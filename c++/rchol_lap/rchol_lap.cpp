@@ -97,13 +97,13 @@ int NUM_THREAD = 0;
 void rchol_lap(Sparse_storage_input *input, Sparse_storage_output *output, std::vector<size_t> &result_idx, int thread)
 {
     NUM_THREAD = thread;
-    cpu_set_t cpuset; 
+    // cpu_set_t cpuset; 
 
     //the CPU we whant to use
     int cpu = 0;
 
-    CPU_ZERO(&cpuset);       //clears the cpuset
-    CPU_SET( cpu , &cpuset); //set CPU 2 on cpuset
+    // CPU_ZERO(&cpuset);       //clears the cpuset
+    // CPU_SET( cpu , &cpuset); //set CPU 2 on cpuset
     /*
     * cpu affinity for the calling thread 
     * first parameter is the pid, 0 = calling thread
@@ -111,7 +111,7 @@ void rchol_lap(Sparse_storage_input *input, Sparse_storage_output *output, std::
     * third param is the cpuset in which your thread will be
     * placed. Each bit represents a CPU
     */
-    sched_setaffinity(0, sizeof(cpuset), &cpuset);
+    // sched_setaffinity(0, sizeof(cpuset), &cpuset);
     
 
     std::vector<gsl_spmatrix *> *lap_val = new std::vector<gsl_spmatrix *>(input->colPtr->size() - 1);
@@ -122,7 +122,7 @@ void rchol_lap(Sparse_storage_input *input, Sparse_storage_output *output, std::
     auto start = std::chrono::steady_clock::now();
     cholesky_factorization(lap, result_idx, output);
     auto end = std::chrono::steady_clock::now();
-    std::cout << "chol time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "\n";
+    // std::cout << "chol time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "\n";
 
 
     // clear memory
@@ -167,7 +167,7 @@ void clear_memory(std::vector<gsl_spmatrix *> &lap)
 
 }
 
-#include<immintrin.h>
+// #include<immintrin.h>
 
 bool uni(Sample a, Sample b) 
 { 
@@ -188,13 +188,13 @@ std::vector<Edge_info> & recursive_calculation(std::vector<size_t> &result_idx, 
 {
 
     int core_id = (core_begin + core_end) / 2;
-    if(sched_getcpu() != core_begin)
-    {
-        cpu_set_t cpuset;
-        CPU_ZERO(&cpuset);
-        CPU_SET(core_begin, &cpuset);
-        sched_setaffinity(0, sizeof(cpuset), &cpuset);
-    }
+    // if(sched_getcpu() != core_begin)
+    // {
+    //     cpu_set_t cpuset;
+    //     CPU_ZERO(&cpuset);
+    //     CPU_SET(core_begin, &cpuset);
+    //     sched_setaffinity(0, sizeof(cpuset), &cpuset);
+    // }
     
     
 
@@ -205,7 +205,7 @@ std::vector<Edge_info> & recursive_calculation(std::vector<size_t> &result_idx, 
 
         //std::cout << "thread id: " << omp_get_thread_num() << "\n";
 		double density = 0;
-        int cpu_num = sched_getcpu();
+        // int cpu_num = sched_getcpu();
         auto time_s = std::chrono::steady_clock::now();
         auto time_e = std::chrono::steady_clock::now();
         auto elapsed = time_s - time_e;
@@ -234,9 +234,9 @@ std::vector<Edge_info> & recursive_calculation(std::vector<size_t> &result_idx, 
         time_e = std::chrono::steady_clock::now();
         elapsed += time_e - time_s;
 
-        std::cout << "depth: " << depth << " thread " << std::this_thread::get_id() << " cpu: " << cpu_num << " time: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << "\n";
-        std::cout << "depth: " << depth << " length: " << result_idx.at(start) << " nztotal " << density << " density: " << density / (result_idx.at(start + total_size) - result_idx.at(start)) << "\n";
-        std::cout << "depth: " << depth << "\n";
+        // std::cout << "depth: " << depth << " thread " << std::this_thread::get_id() << " cpu: " << cpu_num << " time: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << "\n";
+        // std::cout << "depth: " << depth << " length: " << result_idx.at(start) << " nztotal " << density << " density: " << density / (result_idx.at(start + total_size) - result_idx.at(start)) << "\n";
+        // std::cout << "depth: " << depth << "\n";
         //std::cout << omp_proc_bind_master << "  " << omp_get_proc_bind << "\n";
         return sep_edge;
     }
@@ -346,8 +346,8 @@ std::vector<Edge_info> & recursive_calculation(std::vector<size_t> &result_idx, 
         }
         time_e = std::chrono::steady_clock::now();
         elapsed = time_e - time_s;
-        int cpu_num = sched_getcpu();
-        std::cout << "depth(separator): " << depth << " thread " << std::this_thread::get_id() << " cpu: " << cpu_num  << " time: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << " length: " << result_idx.at(start + total_size) - result_idx.at(start + total_size - 1) << " nztotal " << density << " before: " << before_density / (result_idx.at(start + total_size) - result_idx.at(start + total_size - 1)) << " density: " << density / (result_idx.at(start + total_size) - result_idx.at(start + total_size - 1)) << "\n";
+        // int cpu_num = sched_getcpu();
+        // std::cout << "depth(separator): " << depth << " thread " << std::this_thread::get_id() << " cpu: " << cpu_num  << " time: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << " length: " << result_idx.at(start + total_size) - result_idx.at(start + total_size - 1) << " nztotal " << density << " before: " << before_density / (result_idx.at(start + total_size) - result_idx.at(start + total_size - 1)) << " density: " << density / (result_idx.at(start + total_size) - result_idx.at(start + total_size - 1)) << "\n";
 		
         return sep_edge;
     }
@@ -404,7 +404,7 @@ void cholesky_factorization(std::vector<gsl_spmatrix *> &lap, std::vector<size_t
     auto end = std::chrono::steady_clock::now();
     auto elapsed = end - start;
     
-    std::cout << NUM_THREAD << "\n";
+    // std::cout << NUM_THREAD << "\n";
 
 
     start = std::chrono::steady_clock::now();
@@ -418,7 +418,7 @@ void cholesky_factorization(std::vector<gsl_spmatrix *> &lap, std::vector<size_t
     //     diagpt, 0, result_idx.size() - 1, 3);
     end = std::chrono::steady_clock::now();
     elapsed = end - start;
-    std::cout << "factor time: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << "\n";
+    // std::cout << "factor time: " << std::chrono::duration_cast<std::chrono::milliseconds>(elapsed).count() << "\n";
     size_t nzmax = 0;
     size_t edge = 0;
     for (size_t i = 0; i < lap.size(); i++)
@@ -426,9 +426,9 @@ void cholesky_factorization(std::vector<gsl_spmatrix *> &lap, std::vector<size_t
         nzmax += lap.at(i)->nz;
 	    edge += lap.at(i)->split;
     }
-    std::cout<< "nzmax: " << nzmax <<"\n";
-    std::cout<< "edge: " << edge <<"\n";
-    std::cout << "size of matrix length: " << m - 1 << "\n";
+    // std::cout<< "nzmax: " << nzmax <<"\n";
+    // std::cout<< "edge: " << edge <<"\n";
+    // std::cout << "size of matrix length: " << m - 1 << "\n";
 
 
     // return results back 
@@ -778,10 +778,10 @@ bool compare1 (Edge_info *i, Edge_info *j)
 void process_array(const Sparse_storage_input *input, std::vector<size_t> &result_idx, size_t depth, size_t target, std::vector<gsl_spmatrix *> &lap, size_t start, size_t total_size, int core_begin, int core_end)
 {
     int core_id = (core_begin + core_end) / 2;
-    cpu_set_t cpuset;
-    CPU_ZERO(&cpuset);
-    CPU_SET(core_begin, &cpuset);
-    sched_setaffinity(0, sizeof(cpuset), &cpuset);
+    // cpu_set_t cpuset;
+    // CPU_ZERO(&cpuset);
+    // CPU_SET(core_begin, &cpuset);
+    // sched_setaffinity(0, sizeof(cpuset), &cpuset);
     
     // bottom level
     if(target == depth)
