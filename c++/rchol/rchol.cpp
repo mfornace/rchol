@@ -4,7 +4,7 @@
 #include <math.h> 
 #include <iostream>
 
-void rchol(const SparseCSR &A, SparseCSR &G) {
+void rchol(rchol_rng &gen, const SparseCSR &A, SparseCSR &G) {
   size_t N = A.size();
   size_t nnz = A.nnz();
   std::vector<size_t> rowPtr(A.rowPtr, A.rowPtr+N+1);
@@ -24,7 +24,7 @@ void rchol(const SparseCSR &A, SparseCSR &G) {
   // change edge values to positive and begin factorization
   change_to_positive_edge(valL);
   std::vector<size_t> result_idx = {0, rowPtrL.size() - 1};
-  rchol_lap(rowPtrL, colIdxL, valL, G.rowPtr, G.colIdx, G.val, G.N, result_idx);
+  rchol_lap(gen, rowPtrL, colIdxL, valL, G.rowPtr, G.colIdx, G.val, G.N, result_idx);
 }
 
 
